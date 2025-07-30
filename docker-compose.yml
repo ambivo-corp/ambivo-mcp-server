@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  ambivo-mcp-server:
+    build: .
+    image: ambivo/mcp-server:latest
+    container_name: ambivo-mcp-server
+    restart: unless-stopped
+    
+    # Environment variables
+    environment:
+      - AMBIVO_BASE_URL=https://goferapi.ambivo.com
+      - MCP_SERVER_TIMEOUT=30
+    
+    # Optional: if you want to expose HTTP interface in the future
+    # ports:
+    #   - "8000:8000"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import server; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Logging
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          memory: 128M
+
+  # Optional: Add a reverse proxy if you plan to expose HTTP interface
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: ambivo-mcp-proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - ambivo-mcp-server

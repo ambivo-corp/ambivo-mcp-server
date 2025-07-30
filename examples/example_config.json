@@ -1,0 +1,27 @@
+{
+  "base_url": "https://goferapi.ambivo.com",
+  "timeout": 30.0,
+  "max_retries": 3,
+  "rate_limit_requests": 100,
+  "rate_limit_window": 3600,
+  "max_query_length": 1000,
+  "max_payload_size": 1048576,
+  "allowed_entity_types": [
+    "lead",
+    "contact", 
+    "opportunity",
+    "task",
+    "account",
+    "invoice",
+    "order",
+    "product"
+  ],
+  "log_level": "INFO",
+  "log_format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+  "log_file": null,
+  "server_name": "ambivo-mcp-server",
+  "server_version": "1.0.0",
+  "token_validation_enabled": true,
+  "token_cache_ttl": 14400,
+  "auth_token": null
+}
