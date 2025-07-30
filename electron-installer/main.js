@@ -238,7 +238,7 @@ ipcMain.handle('configure-claude', async (event, token) => {
     
     config.mcpServers.ambivo = {
       command: detectedPythonCommand || (process.platform === 'win32' ? 'python' : 'python3'),
-      args: ['-m', 'ambivo-mcp-server'],
+      args: ['-m', 'ambivo_mcp_server'],
       env: {
         AMBIVO_AUTH_TOKEN: token
       }

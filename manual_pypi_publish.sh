@@ -311,12 +311,12 @@ test_package_installation() {
     # Test basic imports
     python -c "
 try:
-    import server
+    import ambivo_mcp_server.server as server
     print('✅ Server module imports successfully')
     
     # Test config and security imports
-    from config import ServerConfig, load_config
-    from security import RateLimiter, InputValidator, TokenValidator
+    from ambivo_mcp_server.config import ServerConfig, load_config
+    from ambivo_mcp_server.security import RateLimiter, InputValidator, TokenValidator
     print('✅ All core modules import successfully')
     
     # Test basic functionality
