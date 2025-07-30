@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ambivo-mcp-server"
-version = "1.0.4"
-description = "MCP Server for Ambivo API endpoints - Natural language queries and direct entity data access"
+version = "1.0.5"
+description = "MCP Server and GPT Actions for Ambivo API endpoints - Natural language queries and direct entity data access"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "Ambivo Development Team", email = "dev@ambivo.com"}
 ]
-keywords = ["mcp", "server", "ambivo", "api", "natural", "language", "query", "entity", "data", "crm"]
+keywords = ["mcp", "server", "ambivo", "api", "natural", "language", "query", "entity", "data", "crm", "gpt", "actions", "chatgpt"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -28,7 +28,8 @@ classifiers = [
 ]
 dependencies = [
     "mcp>=1.0.0",
-    "httpx>=0.25.0"
+    "httpx>=0.25.0",
+    "pyyaml>=6.0.0"
 ]
 
 [project.optional-dependencies]
@@ -43,11 +44,8 @@ test = [
     "pytest-asyncio>=0.21.0",
     "httpx[test]>=0.25.0",
 ]
-remote = [
-    "aiohttp>=3.9.0",
-    "aiohttp-sse>=2.1.0",
-    "aiohttp-cors>=0.7.0",
-    "aiohttp-sse-client>=0.2.1",
+gpt-actions = [
+    "pyyaml>=6.0.0"
 ]
 
 [project.urls]
@@ -59,12 +57,12 @@ remote = [
 [project.scripts]
 ambivo-mcp-server = "ambivo_mcp_server:main"
 ambivo_mcp_server = "ambivo_mcp_server:main"
-ambivo-mcp-http-server = "http_sse_server:main"
-ambivo-mcp-bridge = "http_sse_client_bridge:main"
+ambivo-gpt-actions = "ambivo_gpt_actions:main"
+ambivo_gpt_actions = "ambivo_gpt_actions:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ambivo_mcp_server*"]
+include = ["ambivo_mcp_server*", "ambivo_gpt_actions*"]
 exclude = ["tests*"]
 
 [tool.black]

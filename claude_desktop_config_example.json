@@ -2,7 +2,7 @@
   "mcpServers": {
     "ambivo": {
       "command": "python",
-      "args": ["-m", "ambivo-mcp-server"],
+      "args": ["-m", "ambivo_mcp_server"],
       "env": {
         "AMBIVO_AUTH_TOKEN": "your-jwt-token-here"
       }

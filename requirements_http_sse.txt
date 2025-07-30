@@ -1,5 +1,0 @@
-# Additional requirements for HTTP/SSE transport
-aiohttp>=3.9.0
-aiohttp-sse>=2.1.0
-aiohttp-cors>=0.7.0
-aiohttp-sse-client>=0.2.1
