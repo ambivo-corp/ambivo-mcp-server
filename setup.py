@@ -19,11 +19,11 @@ setup(
     long_description_content_type='text/markdown',
     author="Ambivo Development Team",
     author_email="info@ambivo.com",
-    url="https://github.com/ambivo/ambivo-mcp-server",
+    url="https://github.com/ambivo-corp/ambivo-mcp-server",
     project_urls={
-        "Bug Tracker": "https://github.com/ambivo/ambivo-mcp-server/issues",
-        "Documentation": "https://github.com/ambivo/ambivo-mcp-server#readme",
-        "Source Code": "https://github.com/ambivo/ambivo-mcp-server",
+        "Bug Tracker": "https://github.com/ambivo-corp/ambivo-mcp-server/issues",
+        "Documentation": "https://github.com/ambivo-corp/ambivo-mcp-server#readme",
+        "Source Code": "https://github.com/ambivo-corp/ambivo-mcp-server",
     },
     packages=find_packages(),
     install_requires=[

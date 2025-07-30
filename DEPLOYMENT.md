@@ -407,8 +407,8 @@ export AMBIVO_LOG_LEVEL=DEBUG
 
 For issues and support:
 
-- GitHub Issues: https://github.com/ambivo/ambivo-mcp-server/issues
-- Documentation: https://github.com/ambivo/ambivo-mcp-server#readme
+- GitHub Issues: https://github.com/ambivo-corp/ambivo-mcp-server/issues
+- Documentation: https://github.com/ambivo-corp/ambivo-mcp-server#readme
 - Email: dev@ambivo.com
 
 ## Production Checklist

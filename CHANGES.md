@@ -59,7 +59,7 @@ ambivo-mcp-server/
 pip install ambivo-mcp-server
 
 # Or install from source
-git clone https://github.com/ambivo/ambivo-mcp-server.git
+git clone https://github.com/ambivo-corp/ambivo-mcp-server.git
 cd ambivo-mcp-server
 pip install -e .
 ```

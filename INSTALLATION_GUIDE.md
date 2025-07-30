@@ -75,7 +75,7 @@ python -m pip install ambivo-mcp-server
 ## 🔑 Getting Your Ambivo JWT Token
 
 1. Log into your Ambivo account
-2. Go to Settings → API Access
+2. Go to https://account.ambivo.com/integrations
 3. Generate or copy your JWT token
 4. Keep it safe - it's like a password!
 
@@ -108,6 +108,6 @@ In Claude Desktop, try these commands:
 
 ## 📞 Need Help?
 
-- GitHub Issues: [github.com/ambivo/ambivo-mcp-server/issues](https://github.com/ambivo/ambivo-mcp-server/issues)
+- GitHub Issues: [github.com/ambivo-corp/ambivo-mcp-server/issues](https://github.com/ambivo-corp/ambivo-mcp-server/issues)
 - Email: support@ambivo.com
 - Documentation: [Full Technical Docs](README.md)

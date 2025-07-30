@@ -46,10 +46,10 @@ test = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/ambivo/ambivo-mcp-server"
-"Bug Tracker" = "https://github.com/ambivo/ambivo-mcp-server/issues"
-"Documentation" = "https://github.com/ambivo/ambivo-mcp-server#readme"
-"Source Code" = "https://github.com/ambivo/ambivo-mcp-server"
+"Homepage" = "https://github.com/ambivo-corp/ambivo-mcp-server"
+"Bug Tracker" = "https://github.com/ambivo-corp/ambivo-mcp-server/issues"
+"Documentation" = "https://github.com/ambivo-corp/ambivo-mcp-server#readme"
+"Source Code" = "https://github.com/ambivo-corp/ambivo-mcp-server"
 
 [project.scripts]
 ambivo-mcp-server = "ambivo_mcp_server:main"
