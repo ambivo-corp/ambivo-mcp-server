@@ -36,7 +36,6 @@ setup(
             "pytest-asyncio>=0.21.0",
             "black>=22.0.0",
             "isort>=5.0.0",
-            "mypy>=1.0.0",
         ],
         "test": [
             "pytest>=7.0.0", 

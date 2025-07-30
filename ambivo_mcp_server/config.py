@@ -3,12 +3,12 @@
 Configuration management for Ambivo MCP Server
 """
 
-import os
 import json
 import logging
-from typing import Dict, Any, Optional
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 @dataclass

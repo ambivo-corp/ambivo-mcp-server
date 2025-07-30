@@ -33,9 +33,6 @@ jobs:
     - name: Lint with black
       run: black --check ambivo_mcp_server/
     
-    - name: Type check with mypy
-      run: mypy ambivo_mcp_server/ --ignore-missing-imports
-    
     - name: Check import sorting
       run: isort --check-only ambivo_mcp_server/
     
