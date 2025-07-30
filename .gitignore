@@ -75,3 +75,19 @@ Thumbs.db
 /temp/
 *.log
 /instance/
+
+# Electron installer build artifacts
+electron-installer/node_modules/
+electron-installer/dist/
+electron-installer/out/
+
+# Don't commit built installers
+*.dmg
+*.exe
+*.deb
+*.AppImage
+*.snap
+
+# Claude config
+.claude/
+*.local.json

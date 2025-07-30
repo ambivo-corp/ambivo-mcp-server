@@ -38,7 +38,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGE_NAME="ambivo-mcp-server"
 PYPROJECT_FILE="pyproject.toml"
 SETUP_FILE="setup.py"
-PYPIRC_FILE="$HOME/.pypirc"
+PYPIRC_FILE=".pypirc"
+#PYPIRC_FILE="$HOME/.pypirc"
 
 # Default settings
 USE_TEST_PYPI=false

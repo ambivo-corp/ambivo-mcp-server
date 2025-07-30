@@ -1,0 +1,39 @@
+{
+  "name": "ambivo-claude-installer",
+  "version": "1.0.0",
+  "description": "Easy installer for Ambivo Claude Desktop integration",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-mac": "electron-builder --mac",
+    "build-win": "electron-builder --win",
+    "build": "electron-builder --mac --win"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.ambivo.claude-installer",
+    "productName": "Ambivo for Claude",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns"
+    },
+    "dmg": {
+      "artifactName": "Ambivo-for-Claude-Mac.dmg"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico",
+      "artifactName": "Ambivo-for-Claude-Windows.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false
+    }
+  }
+}

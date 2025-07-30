@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ambivo for Claude - Easy Setup</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step.completed {
+            border-left-color: #4CAF50;
+            background: #f1f8f4;
+        }
+        
+        .step.error {
+            border-left-color: #f44336;
+            background: #fef1f1;
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .step.completed .step-number {
+            color: #4CAF50;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .final-message {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .final-message h2 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Ambivo for Claude</h1>
+        <p class="subtitle">Get Answers from Ambivo CRM</p>
+        <p class="version" style="text-align: center; color: #888; font-size: 12px; margin-bottom: 20px;">Version <span id="app-version">1.0.0</span></p>
+        
+        <div id="step1" class="step">
+            <div class="step-number">Step 1: Check System</div>
+            <div class="status" id="step1-status">Checking your system...</div>
+        </div>
+        
+        <div id="step2" class="step">
+            <div class="step-number">Step 2: Install Ambivo Connector</div>
+            <button id="install-btn" onclick="installServer()" disabled>Install</button>
+            <div class="status" id="step2-status"></div>
+        </div>
+        
+        <div id="step3" class="step">
+            <div class="step-number">Step 3: Enter Your Ambivo Token</div>
+            <input type="text" id="token-input" placeholder="Paste your JWT token here" disabled>
+            <div class="help-text">Get this from <a href="#" onclick="openTokenPage()" style="color: #667eea;">https://account.ambivo.com/integrations</a></div>
+            <button id="configure-btn" onclick="configureClaude()" disabled>Configure Claude</button>
+            <div class="status" id="step3-status"></div>
+        </div>
+        
+        <div id="final-message" class="final-message">
+            <h2>✅ All Done!</h2>
+            <p>Close this window and restart Claude Desktop.</p>
+            <p>Then try: "Show me my leads from this week"</p>
+        </div>
+    </div>
+    
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        // Check Python on startup
+        window.onload = async () => {
+            try {
+                // Set version
+                const version = await ipcRenderer.invoke('get-version');
+                document.getElementById('app-version').textContent = version;
+                
+                const step1Status = document.getElementById('step1-status');
+                step1Status.innerHTML = 'Checking Python installation...';
+                
+                const pythonCheck = await ipcRenderer.invoke('check-python');
+                const step1 = document.getElementById('step1');
+                const installBtn = document.getElementById('install-btn');
+                
+                // Store debug info globally
+                window.lastPythonCheck = pythonCheck;
+                
+                if (pythonCheck.installed && pythonCheck.isValid) {
+                    step1.classList.add('completed');
+                    step1Status.innerHTML = `<span class="success">✓ Python ${pythonCheck.version} is installed</span>`;
+                    installBtn.disabled = false;
+                } else if (pythonCheck.installed && !pythonCheck.isValid) {
+                    step1.classList.add('error');
+                    step1Status.innerHTML = `<span class="error">✗ Python ${pythonCheck.version} found, but Python 3.11+ is required.</span>
+                        <br><button onclick="installPython()" style="margin-top: 10px; width: auto; display: inline-block;">Auto-Install Python 3.12</button>
+                        <button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Recheck Python</button>
+                        <button onclick="showDebugInfo()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Debug Info</button>`;
+                } else {
+                    step1.classList.add('error');
+                    const errorMsg = pythonCheck.error ? ` (${pythonCheck.error})` : '';
+                    step1Status.innerHTML = `<span class="error">✗ Python not found${errorMsg}.</span>
+                        <br><button onclick="installPython()" style="margin-top: 10px; width: auto; display: inline-block;">Auto-Install Python 3.12</button>
+                        <button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Recheck Python</button>
+                        <button onclick="showDebugInfo()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Debug Info</button>`;
+                }
+            } catch (error) {
+                const step1 = document.getElementById('step1');
+                const step1Status = document.getElementById('step1-status');
+                step1.classList.add('error');
+                step1Status.innerHTML = `<span class="error">✗ Error checking Python: ${error.message}</span>
+                    <br><button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block;">Retry Check</button>`;
+            }
+        };
+        
+        async function installServer() {
+            const btn = document.getElementById('install-btn');
+            const status = document.getElementById('step2-status');
+            const step2 = document.getElementById('step2');
+            
+            btn.disabled = true;
+            btn.innerHTML = 'Installing... <span class="loader"></span>';
+            status.innerHTML = '';
+            
+            try {
+                await ipcRenderer.invoke('install-server');
+                step2.classList.add('completed');
+                status.innerHTML = '<span class="success">✓ Installed successfully</span>';
+                btn.style.display = 'none';
+                
+                // Enable step 3
+                document.getElementById('token-input').disabled = false;
+                document.getElementById('configure-btn').disabled = false;
+            } catch (error) {
+                step2.classList.add('error');
+                status.innerHTML = `<span class="error">✗ Installation failed: ${error}</span>`;
+                btn.innerHTML = 'Retry';
+                btn.disabled = false;
+            }
+        }
+        
+        async function configureClaude() {
+            const token = document.getElementById('token-input').value.trim();
+            if (!token) {
+                alert('Please enter your Ambivo JWT token');
+                return;
+            }
+            
+            const btn = document.getElementById('configure-btn');
+            const status = document.getElementById('step3-status');
+            const step3 = document.getElementById('step3');
+            
+            btn.disabled = true;
+            btn.innerHTML = 'Configuring... <span class="loader"></span>';
+            status.innerHTML = '';
+            
+            try {
+                await ipcRenderer.invoke('configure-claude', token);
+                step3.classList.add('completed');
+                status.innerHTML = '<span class="success">✓ Claude configured successfully</span>';
+                btn.style.display = 'none';
+                document.getElementById('token-input').style.display = 'none';
+                
+                // Show final message
+                document.getElementById('final-message').style.display = 'block';
+            } catch (error) {
+                step3.classList.add('error');
+                status.innerHTML = `<span class="error">✗ Configuration failed: ${error}</span>`;
+                btn.innerHTML = 'Retry';
+                btn.disabled = false;
+            }
+        }
+        
+        async function installPython() {
+            try {
+                const message = await ipcRenderer.invoke('install-python');
+                // Show message with restart option
+                const restart = confirm(message + "\n\nWould you like to restart this installer now to refresh Python detection?");
+                if (restart) {
+                    await ipcRenderer.invoke('restart-app');
+                }
+            } catch (error) {
+                alert(`Error: ${error}`);
+            }
+        }
+        
+        async function recheckPython() {
+            try {
+                const step1 = document.getElementById('step1');
+                const step1Status = document.getElementById('step1-status');
+                const installBtn = document.getElementById('install-btn');
+                
+                // Reset classes and show checking status
+                step1.classList.remove('completed', 'error');
+                step1Status.innerHTML = 'Rechecking Python installation...';
+                
+                const pythonCheck = await ipcRenderer.invoke('check-python');
+                
+                // Store debug info globally
+                window.lastPythonCheck = pythonCheck;
+                
+                if (pythonCheck.installed && pythonCheck.isValid) {
+                    step1.classList.add('completed');
+                    step1Status.innerHTML = `<span class="success">✓ Python ${pythonCheck.version} is installed</span>`;
+                    installBtn.disabled = false;
+                } else if (pythonCheck.installed && !pythonCheck.isValid) {
+                    step1.classList.add('error');
+                    step1Status.innerHTML = `<span class="error">✗ Python ${pythonCheck.version} found, but Python 3.11+ is required.</span>
+                        <br><button onclick="installPython()" style="margin-top: 10px; width: auto; display: inline-block;">Auto-Install Python 3.12</button>
+                        <button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Recheck Python</button>
+                        <button onclick="showDebugInfo()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Debug Info</button>`;
+                } else {
+                    step1.classList.add('error');
+                    const errorMsg = pythonCheck.error ? ` (${pythonCheck.error})` : '';
+                    step1Status.innerHTML = `<span class="error">✗ Python not found${errorMsg}.</span>
+                        <br><button onclick="installPython()" style="margin-top: 10px; width: auto; display: inline-block;">Auto-Install Python 3.12</button>
+                        <button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Recheck Python</button>
+                        <button onclick="showDebugInfo()" style="margin-top: 10px; width: auto; display: inline-block; margin-left: 10px;">Debug Info</button>`;
+                }
+            } catch (error) {
+                const step1 = document.getElementById('step1');
+                const step1Status = document.getElementById('step1-status');
+                step1.classList.add('error');
+                step1Status.innerHTML = `<span class="error">✗ Error checking Python: ${error.message}</span>
+                    <br><button onclick="recheckPython()" style="margin-top: 10px; width: auto; display: inline-block;">Retry Check</button>`;
+            }
+        }
+        
+        function showDebugInfo() {
+            if (window.lastPythonCheck && window.lastPythonCheck.debugInfo) {
+                const debugText = window.lastPythonCheck.debugInfo.join('\n');
+                const triedCommands = window.lastPythonCheck.triedCommands ? 
+                    '\n\nTried commands:\n' + window.lastPythonCheck.triedCommands.join('\n') : '';
+                alert('Python Debug Information:\n\n' + debugText + triedCommands);
+            } else {
+                alert('No debug information available. Please run "Recheck Python" first.');
+            }
+        }
+        
+        function openTokenPage() {
+            ipcRenderer.invoke('open-external', 'https://account.ambivo.com/integrations');
+        }
+        
+        function openPythonDownload() {
+            ipcRenderer.invoke('open-external', 'https://www.python.org/downloads/');
+        }
+    </script>
+</body>
+</html>
