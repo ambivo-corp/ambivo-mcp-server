@@ -42,7 +42,7 @@ jobs:
     - name: Lint with black
       run: |
         pip install black
-        black --check server.py
+        black --check ambivo_mcp_server/
     
   build:
     needs: test

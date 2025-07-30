@@ -194,12 +194,17 @@ ipcMain.handle('check-python', async () => {
 });
 
 // Install the MCP server
-ipcMain.handle('install-server', async () => {
+ipcMain.handle('install-server', async (event, installRemote = false) => {
   return new Promise((resolve, reject) => {
     // Use the Python command that was detected during the check
     let pythonCmd = detectedPythonCommand || (process.platform === 'win32' ? 'python' : 'python3');
     
-    exec(`${pythonCmd} -m pip install ambivo-mcp-server`, (error, stdout, stderr) => {
+    // Install with remote extras if requested
+    const installCmd = installRemote 
+      ? `${pythonCmd} -m pip install "ambivo-mcp-server[remote]"`
+      : `${pythonCmd} -m pip install ambivo-mcp-server`;
+    
+    exec(installCmd, (error, stdout, stderr) => {
       if (error) {
         reject(`Installation failed with ${pythonCmd}: ${error.message}`);
       } else {
@@ -210,7 +215,7 @@ ipcMain.handle('install-server', async () => {
 });
 
 // Configure Claude
-ipcMain.handle('configure-claude', async (event, token) => {
+ipcMain.handle('configure-claude', async (event, token, useRemote = false, remoteUrl = '') => {
   try {
     const configPath = getClaudeConfigPath();
     const configDir = path.dirname(configPath);
@@ -236,13 +241,26 @@ ipcMain.handle('configure-claude', async (event, token) => {
       config.mcpServers = {};
     }
     
-    config.mcpServers.ambivo = {
-      command: detectedPythonCommand || (process.platform === 'win32' ? 'python' : 'python3'),
-      args: ['-m', 'ambivo_mcp_server'],
-      env: {
-        AMBIVO_AUTH_TOKEN: token
-      }
-    };
+    if (useRemote && remoteUrl) {
+      // Configure for remote server via bridge
+      config.mcpServers.ambivo = {
+        command: detectedPythonCommand || (process.platform === 'win32' ? 'python' : 'python3'),
+        args: ['-m', 'http_sse_client_bridge'],
+        env: {
+          MCP_SERVER_URL: remoteUrl,
+          AMBIVO_AUTH_TOKEN: token
+        }
+      };
+    } else {
+      // Configure for local server
+      config.mcpServers.ambivo = {
+        command: detectedPythonCommand || (process.platform === 'win32' ? 'python' : 'python3'),
+        args: ['-m', 'ambivo_mcp_server'],
+        env: {
+          AMBIVO_AUTH_TOKEN: token
+        }
+      };
+    }
     
     // Write the config
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));

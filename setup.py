@@ -13,7 +13,7 @@ with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="ambivo-mcp-server",
-    version="1.0.3",
+    version="1.0.4",
     description="MCP Server for Ambivo API endpoints - Natural language queries and direct entity data access",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -42,6 +42,12 @@ setup(
             "pytest>=7.0.0", 
             "pytest-asyncio>=0.21.0",
             "httpx[test]>=0.25.0",
+        ],
+        "remote": [
+            "aiohttp>=3.9.0",
+            "aiohttp-sse>=2.1.0",
+            "aiohttp-cors>=0.7.0",
+            "aiohttp-sse-client>=0.2.1",
         ]
     },
     python_requires=">=3.11",
@@ -49,6 +55,8 @@ setup(
         "console_scripts": [
             "ambivo-mcp-server=ambivo_mcp_server:main",
             "ambivo_mcp_server=ambivo_mcp_server:main",
+            "ambivo-mcp-http-server=http_sse_server:main",
+            "ambivo-mcp-bridge=http_sse_client_bridge:main",
         ],
     },
     classifiers=[

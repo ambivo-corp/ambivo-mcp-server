@@ -128,25 +128,24 @@ jobs:
         # Test basic import
         python -c "
         try:
-            import server
+            from ambivo_mcp_server import server
             print('✅ Server module imports successfully')
             
-            # Test config and security imports
+            # Test imports from the package
             try:
-                from config import ServerConfig
-                from security import RateLimiter
-                print('✅ Core modules import successfully')
-            except Exception as e:
-                print(f'⚠️ Module import issue: {e}')
-                print('ℹ️ This may be expected without MCP dependencies')
+                from ambivo_mcp_server.server import handle_list_tools, handle_call_tool
+                print('✅ Core functions import successfully')
+            except ImportError as e:
+                if 'mcp' in str(e).lower():
+                    print('⚠️ MCP dependencies not available (expected in test)')
+                    print('✅ Package structure is valid')
+                else:
+                    print(f'⚠️ Module import issue: {e}')
+                    print('ℹ️ This may be expected without MCP dependencies')
                 
         except ImportError as e:
-            if 'mcp' in str(e).lower():
-                print('⚠️ MCP dependencies not available (expected in test)')
-                print('✅ Package structure is valid')
-            else:
-                print(f'❌ Import test failed: {e}')
-                exit(1)
+            print(f'❌ Import test failed: {e}')
+            exit(1)
         "
         
         # Cleanup
@@ -384,19 +383,12 @@ jobs:
         # Test basic import and functionality
         python -c "
         try:
-            import server
+            from ambivo_mcp_server import server
             print('✅ Server module imports successfully')
             
-            # Test config and security imports
-            from config import ServerConfig, load_config
-            from security import RateLimiter, InputValidator, TokenValidator
-            print('✅ All core modules import successfully')
-            
-            # Test basic functionality
-            config = ServerConfig()
-            limiter = RateLimiter()
-            validator = InputValidator()
-            print('✅ Core components initialize successfully')
+            # Test imports from the package
+            from ambivo_mcp_server.server import handle_list_tools, handle_call_tool
+            print('✅ Core functions import successfully')
             
             print('✅ Package is ready for production')
             

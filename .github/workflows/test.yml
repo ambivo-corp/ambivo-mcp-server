@@ -31,13 +31,13 @@ jobs:
       run: python basic_test.py
     
     - name: Lint with black
-      run: black --check server.py
+      run: black --check ambivo_mcp_server/
     
     - name: Type check with mypy
-      run: mypy server.py --ignore-missing-imports
+      run: mypy ambivo_mcp_server/ --ignore-missing-imports
     
     - name: Check import sorting
-      run: isort --check-only server.py
+      run: isort --check-only ambivo_mcp_server/
     
     # Uncomment when proper tests are added
     # - name: Run pytest
