@@ -12,7 +12,7 @@ from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 # Version timestamp - automatically updated on git push
@@ -72,6 +72,30 @@ async def get_auth_token(authorization: Optional[str] = Header(None)) -> str:
 
 
 # Routes
+@app.get("/")
+async def root():
+    """Root endpoint - API documentation"""
+    return {
+        "name": "Ambivo GPT Actions API",
+        "version": "1.0.0",
+        "description": "Direct API for ChatGPT integration with Ambivo CRM data",
+        "endpoints": {
+            "GET /": "API documentation",
+            "GET /.well-known/ai-plugin.json": "AI plugin manifest",
+            "GET /openapi.json": "OpenAPI specification (JSON)",
+            "GET /openapi.yaml": "OpenAPI specification (YAML)",
+            "GET /health": "Health check",
+            "GET /tools": "List available tools",
+            "POST /tools": "Execute a specific tool",
+            "POST /query": "Natural language query"
+        },
+        "authentication": {
+            "type": "Bearer Token",
+            "description": "Include JWT token in Authorization header"
+        }
+    }
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
@@ -96,9 +120,43 @@ async def health_check():
 
 
 @app.get("/openapi.json")
+@app.post("/openapi.json")
 async def get_openapi_schema():
     """Get OpenAPI schema - FastAPI generates this automatically"""
     return app.openapi()
+
+
+@app.get("/openapi.yaml")
+async def get_openapi_yaml():
+    """Get OpenAPI schema in YAML format"""
+    import yaml
+    schema = app.openapi()
+    return Response(
+        content=yaml.dump(schema, default_flow_style=False),
+        media_type="application/x-yaml"
+    )
+
+
+@app.get("/.well-known/ai-plugin.json") 
+async def get_ai_plugin():
+    """AI plugin manifest for ChatGPT"""
+    return {
+        "schema_version": "v1",
+        "name_for_human": "Ambivo CRM",
+        "name_for_model": "ambivo_crm",
+        "description_for_human": "Access and query Ambivo CRM data using natural language",
+        "description_for_model": "Plugin for querying Ambivo CRM data including leads, contacts, deals, and other entities using natural language queries or direct API calls.",
+        "auth": {
+            "type": "bearer"
+        },
+        "api": {
+            "type": "openapi",
+            "url": "https://gpt.ambivo.com/openapi.json"
+        },
+        "logo_url": "https://ambivo.com/logo.png",
+        "contact_email": "dev@ambivo.com",
+        "legal_info_url": "https://ambivo.com/legal"
+    }
 
 
 @app.post("/query")
