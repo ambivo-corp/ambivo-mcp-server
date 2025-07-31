@@ -168,7 +168,7 @@ async def generate_openapi_schema() -> Dict[str, Any]:
                                 },
                                 "response_format": {
                                     "type": "string",
-                                    "enum": ["text", "table", "both"],
+                                    "enum": ["table", "natural", "both"],
                                     "default": "both",
                                     "description": "Format for the response"
                                 }
