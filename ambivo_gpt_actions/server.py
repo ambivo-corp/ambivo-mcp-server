@@ -153,12 +153,24 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             # Update servers section with actual host
             host = self.headers.get('Host', 'localhost:8080')
             protocol = 'https' if 'railway.app' in host or 'herokuapp.com' in host else 'http'
-            schema['servers'] = [
-                {
-                    "url": f"{protocol}://{host}",
-                    "description": "Current server"
-                }
-            ]
+            
+            # Create a new ordered schema to ensure proper structure for ChatGPT
+            ordered_schema = {
+                "openapi": schema.get("openapi", "3.0.3"),
+                "info": schema.get("info", {}),
+                "servers": [
+                    {
+                        "url": f"{protocol}://{host}",
+                        "description": "Production server"
+                    }
+                ],
+                "paths": schema.get("paths", {}),
+                "components": schema.get("components", {}),
+                "security": schema.get("security", [])
+            }
+            
+            # Use the ordered schema
+            schema = ordered_schema
             
             # Send response based on format
             if format == 'json':
