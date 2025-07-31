@@ -15,6 +15,9 @@ from socketserver import ThreadingMixIn
 from urllib.parse import urlparse, parse_qs
 import threading
 
+# Version timestamp - update this with each deployment
+VERSION_TIMESTAMP = "2025-07-31T02:30:37Z"
+
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from ambivo_mcp_server.server import handle_list_tools, handle_call_tool, api_client
@@ -266,7 +269,12 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                 "status": "healthy",
                 "timestamp": datetime.now(UTC).isoformat(),
                 "available_tools": tool_names,
-                "server_type": "gpt_actions"
+                "server_type": "gpt_actions",
+                "version": VERSION_TIMESTAMP,
+                "deployment_info": {
+                    "version_timestamp": VERSION_TIMESTAMP,
+                    "build_time": datetime.now(UTC).isoformat()
+                }
             })
             
         except Exception as e:
