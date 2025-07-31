@@ -39,9 +39,9 @@ app = FastAPI(
     title="Ambivo CRM API",
     description="API for accessing and querying Ambivo CRM data using natural language and direct tool calls",
     version="1.0.0",
+    openapi_version="3.1.0",
     servers=[
-        {"url": "https://gpt.ambivo.com", "description": "Production server"},
-        {"url": "http://localhost:8080", "description": "Local development"}
+        {"url": "https://gpt.ambivo.com", "description": "Production server"}
     ]
 )
 
@@ -123,7 +123,34 @@ async def health_check():
 @app.post("/openapi.json")
 async def get_openapi_schema():
     """Get OpenAPI schema - FastAPI generates this automatically"""
-    return app.openapi()
+    schema = app.openapi()
+    
+    # Ensure the servers section is exactly what ChatGPT expects
+    schema["servers"] = [
+        {
+            "url": "https://gpt.ambivo.com",
+            "description": "Production server"
+        }
+    ]
+    
+    # Ensure OpenAPI version is 3.1.0 (required by ChatGPT)
+    schema["openapi"] = "3.1.0"
+    
+    # Add security scheme for Bearer tokens
+    if "components" not in schema:
+        schema["components"] = {}
+    if "securitySchemes" not in schema["components"]:
+        schema["components"]["securitySchemes"] = {}
+    
+    schema["components"]["securitySchemes"]["bearerAuth"] = {
+        "type": "http",
+        "scheme": "bearer"
+    }
+    
+    # Add global security requirement
+    schema["security"] = [{"bearerAuth": []}]
+    
+    return schema
 
 
 @app.get("/openapi.yaml")
@@ -159,13 +186,29 @@ async def get_ai_plugin():
     }
 
 
-@app.post("/query")
+@app.post("/query", operation_id="queryData", summary="Query CRM data", description="Execute natural language query against CRM data")
+@app.get("/query", operation_id="queryDataGet", summary="Query CRM data (GET)", description="Execute natural language query via GET parameters")
 async def natural_language_query(
-    request: QueryRequest,
-    token: str = Depends(get_auth_token)
+    request: QueryRequest = None,
+    token: str = Depends(get_auth_token),
+    query: str = None,
+    response_format: str = "both"
 ):
     """Execute natural language query"""
     try:
+        # Handle both POST (JSON body) and GET (query parameters)
+        if request:
+            # POST request with JSON body
+            query_text = request.query
+            format_type = request.response_format
+        else:
+            # GET request with query parameters
+            query_text = query
+            format_type = response_format
+            
+        if not query_text:
+            raise HTTPException(status_code=400, detail="Query parameter is required")
+        
         # Set auth token for this request
         original_token = api_client.auth_token
         api_client.set_auth_token(token)
@@ -173,8 +216,8 @@ async def natural_language_query(
         try:
             # Call the MCP tool directly (no event loop issues!)
             result = await handle_call_tool('natural_query', {
-                'query': request.query,
-                'response_format': request.response_format
+                'query': query_text,
+                'response_format': format_type
             })
             
             # Format response
@@ -183,9 +226,9 @@ async def natural_language_query(
                 response_text += content.text + "\n"
             
             return {
-                "query": request.query,
+                "query": query_text,
                 "result": response_text.strip(),
-                "response_format": request.response_format,
+                "response_format": format_type,
                 "timestamp": datetime.now(UTC).isoformat(),
                 "success": True
             }
@@ -245,9 +288,12 @@ async def list_tools(token: str = Depends(get_auth_token)):
 
 
 @app.post("/tools")
+@app.get("/tools/execute")
 async def execute_tool(
-    request: ToolRequest,
-    token: str = Depends(get_auth_token)
+    request: ToolRequest = None,
+    token: str = Depends(get_auth_token),
+    name: str = None,
+    arguments: str = "{}"
 ):
     """Execute a specific tool"""
     try:

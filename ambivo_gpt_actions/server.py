@@ -16,7 +16,7 @@ from urllib.parse import urlparse, parse_qs
 import threading
 
 # Version timestamp - automatically updated on git push
-VERSION_TIMESTAMP = "2025-07-31T03:30:29Z"
+VERSION_TIMESTAMP = "2025-07-31T03:47:57Z"
 
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
