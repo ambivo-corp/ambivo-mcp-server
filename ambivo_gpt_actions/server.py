@@ -16,7 +16,7 @@ from urllib.parse import urlparse, parse_qs
 import threading
 
 # Version timestamp - automatically updated on git push
-VERSION_TIMESTAMP = "2025-07-31T02:33:15Z"
+VERSION_TIMESTAMP = "2025-07-31T02:40:35Z"
 
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -58,6 +58,10 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             self._handle_openapi_spec(format='json')
         elif path == '/openapi-test.json':
             self._handle_test_openapi()
+        elif path == '/schema.json':
+            self._handle_openapi_spec(format='json')
+        elif path == '/debug':
+            self._handle_debug()
         elif path == '/health':
             self._handle_health()
         elif path == '/tools':
@@ -252,6 +256,20 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
         }
         
         self._send_json_response(test_spec)
+    
+    def _handle_debug(self):
+        """Debug endpoint to check what's happening"""
+        self._send_json_response({
+            "message": "Debug endpoint working",
+            "version": VERSION_TIMESTAMP,
+            "paths": {
+                "health": "/health - working",
+                "openapi_json": "/openapi.json - 501 error", 
+                "schema_json": "/schema.json - alternative",
+                "query": "/query - working"
+            },
+            "timestamp": datetime.now(UTC).isoformat()
+        })
     
     def _handle_health(self):
         """Handle health check"""
