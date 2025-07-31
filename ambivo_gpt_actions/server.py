@@ -152,7 +152,10 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             
             # Update servers section with actual host
             host = self.headers.get('Host', 'localhost:8080')
-            protocol = 'https' if 'railway.app' in host or 'herokuapp.com' in host else 'http'
+            # Use HTTPS for production domains
+            protocol = 'https' if ('railway.app' in host or 'herokuapp.com' in host or 
+                                  'ambivo.com' in host or 'onrender.com' in host or 
+                                  'vercel.app' in host or host != 'localhost:8080') else 'http'
             
             # Create a new ordered schema to ensure proper structure for ChatGPT
             ordered_schema = {
