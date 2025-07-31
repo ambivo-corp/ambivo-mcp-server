@@ -148,6 +148,16 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             finally:
                 loop.close()
             
+            # Update servers section with actual host
+            host = self.headers.get('Host', 'localhost:8080')
+            protocol = 'https' if 'railway.app' in host or 'herokuapp.com' in host else 'http'
+            schema['servers'] = [
+                {
+                    "url": f"{protocol}://{host}",
+                    "description": "Current server"
+                }
+            ]
+            
             # Send as YAML
             import yaml
             yaml_content = yaml.dump(schema, default_flow_style=False).encode('utf-8')
