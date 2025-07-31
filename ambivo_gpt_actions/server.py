@@ -17,7 +17,7 @@ import threading
 
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from ambivo_mcp_server.server import handle_list_tools, handle_call_tool
+from ambivo_mcp_server.server import handle_list_tools, handle_call_tool, api_client
 from ambivo_mcp_server.security import validate_jwt_token
 
 
@@ -249,9 +249,9 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                 self._send_error(400, "Tool name is required")
                 return
             
-            # Handle auth token setting
-            if tool_name == 'set_auth_token':
-                arguments['token'] = auth_token
+            # Set the auth token from the request header for this request
+            original_token = api_client.auth_token
+            api_client.set_auth_token(auth_token)
             
             # Call the MCP tool
             loop = asyncio.new_event_loop()
@@ -259,6 +259,11 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             try:
                 result = loop.run_until_complete(handle_call_tool(tool_name, arguments))
             finally:
+                # Restore original token (if any)
+                if original_token:
+                    api_client.auth_token = original_token
+                else:
+                    api_client.auth_token = None
                 loop.close()
             
             # Format response
@@ -296,6 +301,10 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                 self._send_error(400, "Query parameter is required")
                 return
             
+            # Set the auth token from the request header for this request
+            original_token = api_client.auth_token
+            api_client.set_auth_token(auth_token)
+            
             # Call the natural query tool
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
@@ -305,6 +314,11 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                     'response_format': response_format
                 }))
             finally:
+                # Restore original token (if any)
+                if original_token:
+                    api_client.auth_token = original_token
+                else:
+                    api_client.auth_token = None
                 loop.close()
             
             # Format response

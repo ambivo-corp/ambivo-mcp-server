@@ -1,0 +1,1 @@
+web: ambivo-gpt-actions serve --host 0.0.0.0 --port $PORT

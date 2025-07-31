@@ -1,0 +1,32 @@
+{
+  "name": "Ambivo CRM Assistant",
+  "description": "Access and query Ambivo CRM data using natural language. Query leads, contacts, deals, and other CRM entities.",
+  "schema_url": "http://localhost:8080/openapi.yaml",
+  "authentication": {
+    "type": "bearer_token",
+    "instructions": "Get your JWT token from Ambivo and paste it here. The token should start with 'eyJ'."
+  },
+  "privacy_policy_url": "https://ambivo.com/privacy",
+  "instructions": {
+    "setup": [
+      "1. Start the GPT Actions server: python -m ambivo_gpt_actions serve",
+      "2. Copy the OpenAPI schema URL: http://localhost:8080/openapi.yaml", 
+      "3. In ChatGPT, create a new GPT and add this as an Action",
+      "4. Configure authentication with your Ambivo JWT token"
+    ],
+    "usage": [
+      "Ask natural language questions about your CRM data:",
+      "- 'Show me leads created this week'",
+      "- 'Find contacts with gmail addresses'", 
+      "- 'What deals are closing this month?'",
+      "- 'Get contact information for John Smith'"
+    ]
+  },
+  "example_queries": [
+    "Show me all leads created in the last 7 days",
+    "Find contacts from companies in California",
+    "What deals have a value over $10,000?",
+    "List recent activities for lead ID 12345",
+    "Get contact details for email john@example.com"
+  ]
+}
