@@ -7,6 +7,7 @@ import argparse
 import asyncio
 import logging
 import sys
+import subprocess
 from .server import GPTActionsServer
 from .schema_generator import generate_openapi_schema, save_openapi_schema
 
@@ -80,8 +81,18 @@ def main():
             print("Press Ctrl+C to stop the server")
             
             # Use FastAPI server instead
-            import uvicorn
-            from .fastapi_server import app
+            try:
+                import uvicorn
+                from .fastapi_server import app
+            except ImportError as e:
+                print(f"FastAPI dependencies not installed: {e}")
+                print("Installing required dependencies...")
+                import subprocess
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "fastapi>=0.104.0", "uvicorn>=0.24.0"])
+                
+                # Retry import
+                import uvicorn
+                from .fastapi_server import app
             
             uvicorn.run(
                 app, 
