@@ -72,16 +72,23 @@ def main():
     setup_logging(log_level)
     
     if args.command == 'serve':
-        # Start the server
+        # Start the FastAPI server (proper async implementation)
         try:
-            server = GPTActionsServer(host=args.host, port=args.port)
-            print(f"Starting Ambivo GPT Actions server on {args.host}:{args.port}")
-            print(f"API documentation: http://{args.host}:{args.port}/")
-            print(f"OpenAPI spec: http://{args.host}:{args.port}/openapi.yaml")
-            print(f"AI Plugin manifest: http://{args.host}:{args.port}/.well-known/ai-plugin.json")
+            print(f"Starting Ambivo GPT Actions FastAPI server on {args.host}:{args.port}")
+            print(f"API documentation: http://{args.host}:{args.port}/docs")
+            print(f"OpenAPI spec: http://{args.host}:{args.port}/openapi.json")
             print("Press Ctrl+C to stop the server")
             
-            server.start(blocking=True)
+            # Use FastAPI server instead
+            import uvicorn
+            from .fastapi_server import app
+            
+            uvicorn.run(
+                app, 
+                host=args.host, 
+                port=args.port,
+                log_level="info" if getattr(args, 'verbose', False) else "warning"
+            )
             
         except KeyboardInterrupt:
             print("\nServer stopped by user")

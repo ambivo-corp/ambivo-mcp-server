@@ -44,7 +44,9 @@ setup(
             "httpx[test]>=0.25.0",
         ],
         "gpt-actions": [
-            "pyyaml>=6.0.0"
+            "pyyaml>=6.0.0",
+            "fastapi>=0.104.0",
+            "uvicorn>=0.24.0"
         ]
     },
     python_requires=">=3.11",
