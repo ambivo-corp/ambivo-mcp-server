@@ -15,8 +15,8 @@ from socketserver import ThreadingMixIn
 from urllib.parse import urlparse, parse_qs
 import threading
 
-# Version timestamp - update this with each deployment
-VERSION_TIMESTAMP = "2025-07-31T02:30:37Z"
+# Version timestamp - automatically updated on git push
+VERSION_TIMESTAMP = "2025-07-31T02:33:15Z"
 
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
