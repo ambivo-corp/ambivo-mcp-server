@@ -53,6 +53,8 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             self._handle_openapi_spec()
         elif path == '/openapi.json':
             self._handle_openapi_spec(format='json')
+        elif path == '/openapi-test.json':
+            self._handle_test_openapi()
         elif path == '/health':
             self._handle_health()
         elif path == '/tools':
@@ -193,6 +195,60 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
         except Exception as e:
             logging.error(f"Error generating OpenAPI spec: {e}")
             self._send_error(500, f"Error generating OpenAPI spec: {str(e)}")
+    
+    def _handle_test_openapi(self):
+        """Return a test OpenAPI spec that matches exactly what ChatGPT expects"""
+        # Try the exact format from OpenAI's examples
+        test_spec = {
+            "openapi": "3.1.0",
+            "info": {
+                "title": "Ambivo CRM API",
+                "description": "Access Ambivo CRM data",
+                "version": "1.0.0"
+            },
+            "servers": [
+                {
+                    "url": "https://gpt.ambivo.com"
+                }
+            ],
+            "paths": {
+                "/query": {
+                    "post": {
+                        "operationId": "queryData",
+                        "summary": "Query CRM data",
+                        "requestBody": {
+                            "required": True,
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "query": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "description": "Successful response",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        self._send_json_response(test_spec)
     
     def _handle_health(self):
         """Handle health check"""
