@@ -1,1 +1,1 @@
-web: ambivo-gpt-actions serve --host 0.0.0.0 --port $PORT
+web: sh -c 'ambivo-gpt-actions serve --host 0.0.0.0 --port ${PORT:-8080}'
