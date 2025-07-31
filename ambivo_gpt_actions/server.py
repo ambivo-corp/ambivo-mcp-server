@@ -18,7 +18,6 @@ import threading
 # Add parent directory to path to import MCP server
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from ambivo_mcp_server.server import handle_list_tools, handle_call_tool, api_client
-from ambivo_mcp_server.security import validate_jwt_token
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -195,8 +194,7 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                 self._send_error(401, "Authorization token required")
                 return
             
-            # Validate token (optional - depending on your security needs)
-            # validate_jwt_token(auth_token)  # Uncomment if needed
+            # Token validation happens at the API level
             
             # Get tools from MCP server
             loop = asyncio.new_event_loop()
