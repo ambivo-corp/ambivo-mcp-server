@@ -339,17 +339,17 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             api_client.set_auth_token(auth_token)
             
             # Call the MCP tool
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
             try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
                 result = loop.run_until_complete(handle_call_tool(tool_name, arguments))
+                loop.close()
             finally:
                 # Restore original token (if any)
                 if original_token:
                     api_client.auth_token = original_token
                 else:
                     api_client.auth_token = None
-                loop.close()
             
             # Format response
             response_text = ""
@@ -391,20 +391,20 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             api_client.set_auth_token(auth_token)
             
             # Call the natural query tool
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
             try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
                 result = loop.run_until_complete(handle_call_tool('natural_query', {
                     'query': query,
                     'response_format': response_format
                 }))
+                loop.close()
             finally:
                 # Restore original token (if any)
                 if original_token:
                     api_client.auth_token = original_token
                 else:
                     api_client.auth_token = None
-                loop.close()
             
             # Format response
             response_text = ""
