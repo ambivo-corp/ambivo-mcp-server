@@ -340,10 +340,20 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             
             # Call the MCP tool
             try:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                result = loop.run_until_complete(handle_call_tool(tool_name, arguments))
-                loop.close()
+                # Check if there's already an event loop running
+                try:
+                    loop = asyncio.get_running_loop()
+                    # Use run_coroutine_threadsafe for existing loop
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(
+                            asyncio.run,
+                            handle_call_tool(tool_name, arguments)
+                        )
+                        result = future.result(timeout=30)
+                except RuntimeError:
+                    # No event loop running, create new one
+                    result = asyncio.run(handle_call_tool(tool_name, arguments))
             finally:
                 # Restore original token (if any)
                 if original_token:
@@ -392,13 +402,26 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             
             # Call the natural query tool
             try:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                result = loop.run_until_complete(handle_call_tool('natural_query', {
-                    'query': query,
-                    'response_format': response_format
-                }))
-                loop.close()
+                # Check if there's already an event loop running
+                try:
+                    loop = asyncio.get_running_loop()
+                    # Use run_coroutine_threadsafe for existing loop
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(
+                            asyncio.run,
+                            handle_call_tool('natural_query', {
+                                'query': query,
+                                'response_format': response_format
+                            })
+                        )
+                        result = future.result(timeout=30)
+                except RuntimeError:
+                    # No event loop running, create new one
+                    result = asyncio.run(handle_call_tool('natural_query', {
+                        'query': query,
+                        'response_format': response_format
+                    }))
             finally:
                 # Restore original token (if any)
                 if original_token:
