@@ -161,7 +161,7 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             
             # Create a new ordered schema to ensure proper structure for ChatGPT
             ordered_schema = {
-                "openapi": schema.get("openapi", "3.0.3"),
+                "openapi": schema.get("openapi", "3.1.0"),
                 "info": schema.get("info", {}),
                 "servers": [
                     {

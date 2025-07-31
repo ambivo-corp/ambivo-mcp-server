@@ -36,7 +36,7 @@ except Exception as e:
     # Use default config
     config = ServerConfig()
 
-# Initialize security components
+# Initialize  security components
 rate_limiter = RateLimiter(
     max_requests=config.rate_limit_requests, window_seconds=config.rate_limit_window
 )

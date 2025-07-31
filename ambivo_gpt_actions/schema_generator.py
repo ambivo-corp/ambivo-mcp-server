@@ -21,7 +21,7 @@ async def generate_openapi_schema() -> Dict[str, Any]:
     
     # Base OpenAPI structure
     schema = {
-        "openapi": "3.0.3",
+        "openapi": "3.1.0",
         "info": {
             "title": "Ambivo CRM API",
             "description": "API for accessing and querying Ambivo CRM data using natural language and direct tool calls",
