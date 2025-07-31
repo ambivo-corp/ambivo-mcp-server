@@ -51,6 +51,8 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
             self._handle_ai_plugin()
         elif path == '/openapi.yaml':
             self._handle_openapi_spec()
+        elif path == '/openapi.json':
+            self._handle_openapi_spec(format='json')
         elif path == '/health':
             self._handle_health()
         elif path == '/tools':
@@ -135,7 +137,7 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
         }
         self._send_json_response(manifest)
     
-    def _handle_openapi_spec(self):
+    def _handle_openapi_spec(self, format='yaml'):
         """Handle OpenAPI specification"""
         from .schema_generator import generate_openapi_schema
         
@@ -158,16 +160,20 @@ class GPTActionsHandler(BaseHTTPRequestHandler):
                 }
             ]
             
-            # Send as YAML
-            import yaml
-            yaml_content = yaml.dump(schema, default_flow_style=False).encode('utf-8')
-            
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/x-yaml')
-            self.send_header('Content-Length', str(len(yaml_content)))
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(yaml_content)
+            # Send response based on format
+            if format == 'json':
+                self._send_json_response(schema)
+            else:
+                # Send as YAML
+                import yaml
+                yaml_content = yaml.dump(schema, default_flow_style=False, sort_keys=False).encode('utf-8')
+                
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/x-yaml')
+                self.send_header('Content-Length', str(len(yaml_content)))
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(yaml_content)
             
         except Exception as e:
             logging.error(f"Error generating OpenAPI spec: {e}")
