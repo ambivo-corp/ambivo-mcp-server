@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "uvicorn ambivo_gpt_actions.test_app:app --host 0.0.0.0 --port ${PORT:-8080}"
+    "startCommand": "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"
 
 
   }
