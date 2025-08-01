@@ -2,9 +2,10 @@
 """Simple test GPT Actions app with /ping endpoint"""
 
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import uvicorn
 import argparse
 import sys
@@ -15,6 +16,18 @@ class PingResponse(BaseModel):
     timestamp: str
     date: str
     time: str
+
+
+class QueryRequest(BaseModel):
+    query: str
+    response_format: str = "natural"
+
+
+class QueryResponse(BaseModel):
+    message: str
+    query: str
+    auth_received: bool
+    timestamp: str
 
 
 app = FastAPI(
@@ -55,9 +68,27 @@ async def ping():
 
 
 @app.post("/ping", response_model=PingResponse)
-async def ping_post():
-    """POST version of ping endpoint"""
-    return await ping()
+async def ping_post(
+    request: Optional[QueryRequest] = None,
+    authorization: Optional[str] = Header(None)
+):
+    """POST version of ping endpoint that can accept auth header and body"""
+    now = datetime.now()
+    
+    # Log if we received auth header
+    if authorization:
+        print(f"Received auth header: {authorization[:20]}...")
+    
+    # Log if we received request body
+    if request:
+        print(f"Received query: {request.query}")
+        
+    return PingResponse(
+        message="Pong! Server is alive (with auth)" if authorization else "Pong! Server is alive",
+        timestamp=now.isoformat(),
+        date=now.strftime("%Y-%m-%d"),
+        time=now.strftime("%H:%M:%S")
+    )
 
 
 def main():
