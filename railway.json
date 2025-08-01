@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "pip install -r requirements.txt && python -m ambivo_gpt_actions.main"
+    "startCommand": "python -m ambivo_gpt_actions.main"
   }
 }
