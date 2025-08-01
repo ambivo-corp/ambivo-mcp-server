@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 import os
+print(f"🧪 Starting main.py, PORT={os.environ.get('PORT')}")
 
 class PingResponse(BaseModel):
     message: str
@@ -68,6 +69,9 @@ async def ping_post(
     )
 
 if __name__ == "__main__":
+
+
     port = int(os.environ.get("PORT", 8080))
-    print(f"🚀 Starting on http://0.0.0.0:{port}")
+    print(f"🚀 Starting Uvicorn on 0.0.0.0:{port}")
     uvicorn.run("ambivo_gpt_actions.main:app", host="0.0.0.0", port=port)
+
