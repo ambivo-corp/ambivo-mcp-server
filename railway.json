@@ -4,6 +4,6 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "bash start_test_app.sh"
+    "startCommand": "python -m ambivo_gpt_actions.test_app --host 0.0.0.0 --port ${PORT:-8080}"
   }
 }
