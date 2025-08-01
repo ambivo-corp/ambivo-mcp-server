@@ -10,7 +10,6 @@ This Claude MCP (Model Context Protocol) server provides access to Ambivo API en
 - **Token Caching**: Efficient token validation with caching
 - **Error Handling**: Comprehensive error handling with detailed error messages
 - **Retry Logic**: Automatic retry with exponential backoff for failed requests
-- **Remote Hosting Support**: Can be hosted in the cloud for multi-user access via HTTP/SSE transport
 
 ## Tools
 
@@ -58,9 +57,6 @@ This is a pure Claude-based MCP server implementation for the Ambivo API, design
 ### Option 1: Install from PyPI (Recommended)
 ```bash
 pip install ambivo-mcp-server
-
-# For remote server support (optional)
-pip install "ambivo-mcp-server[remote]"
 ```
 
 ### Option 2: Install from Source
@@ -68,14 +64,10 @@ pip install "ambivo-mcp-server[remote]"
 git clone https://github.com/ambivo-corp/ambivo-mcp-server.git
 cd ambivo-mcp-server
 pip install -e .
-
-# For remote server support (optional)
-pip install -e ".[remote]"
 ```
 
 ## Running the Server
 
-### Local Mode (Default)
 ```bash
 # If installed via pip
 ambivo-mcp-server
@@ -83,32 +75,6 @@ ambivo-mcp-server
 # Or using Python module
 python -m ambivo_mcp_server.server
 ```
-
-### Remote Mode (Cloud Hosting)
-Host the server in the cloud for multiple users:
-
-1. **Start the HTTP/SSE server (on your cloud server):**
-```bash
-python http_sse_server.py
-```
-
-2. **Configure Claude Desktop (on user's machine):**
-```json
-{
-  "mcpServers": {
-    "ambivo": {
-      "command": "python",
-      "args": ["-m", "http_sse_client_bridge"],
-      "env": {
-        "MCP_SERVER_URL": "https://your-server.com",
-        "AMBIVO_AUTH_TOKEN": "user-jwt-token"
-      }
-    }
-  }
-}
-```
-
-See [INSTALL_HTTP_SSE.md](INSTALL_HTTP_SSE.md) for detailed cloud deployment instructions.
 
 ## Configuration
 

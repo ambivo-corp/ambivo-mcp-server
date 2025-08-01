@@ -13,7 +13,7 @@ with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="ambivo-mcp-server",
-    version="1.0.5",
+    version="1.0.6",
     description="MCP Server for Ambivo API endpoints - Natural language queries and direct entity data access",
     long_description=long_description,
     long_description_content_type='text/markdown',
