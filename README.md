@@ -1,6 +1,6 @@
-# Ambivo MCP Server
+# Ambivo Claude MCP Server
 
-This MCP (Model Context Protocol) server provides access to Ambivo API endpoints for natural language querying of entity data.
+This Claude MCP (Model Context Protocol) server provides access to Ambivo API endpoints for natural language querying of entity data with Claude AI.
 
 ## Features
 
@@ -48,6 +48,10 @@ Execute natural language queries against Ambivo entity data.
 }
 ```
 
+
+## About
+
+This is a pure Claude-based MCP server implementation for the Ambivo API, designed to work seamlessly with Claude Desktop and other Claude-compatible MCP clients. It enables natural language interaction with your Ambivo CRM data through Claude's powerful language understanding capabilities.
 
 ## Installation
 

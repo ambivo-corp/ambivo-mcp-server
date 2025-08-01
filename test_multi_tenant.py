@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for multi-tenant GPT Actions server
+Test script for multi-tenant MCP server
 """
 
 import requests
@@ -54,7 +54,7 @@ def test_with_token(token):
         print(f"Tool result: {result.get('result', '')[:100]}...")
 
 def main():
-    print("Multi-tenant GPT Actions Server Test")
+    print("Multi-tenant MCP Server Test")
     print("="*40)
     
     # Test with different tokens (replace with actual tokens)

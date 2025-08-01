@@ -14,7 +14,7 @@ with open(os.path.join(current_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name="ambivo-mcp-server",
     version="1.0.5",
-    description="MCP Server and GPT Actions for Ambivo API endpoints - Natural language queries and direct entity data access",
+    description="MCP Server for Ambivo API endpoints - Natural language queries and direct entity data access",
     long_description=long_description,
     long_description_content_type='text/markdown',
     author="Ambivo Development Team",
@@ -43,19 +43,12 @@ setup(
             "pytest-asyncio>=0.21.0",
             "httpx[test]>=0.25.0",
         ],
-        "gpt-actions": [
-            "pyyaml>=6.0.0",
-            "fastapi>=0.104.0",
-            "uvicorn>=0.24.0"
-        ]
     },
     python_requires=">=3.11",
     entry_points={
         "console_scripts": [
             "ambivo-mcp-server=ambivo_mcp_server:main",
             "ambivo_mcp_server=ambivo_mcp_server:main",
-            "ambivo-gpt-actions=ambivo_gpt_actions:main",
-            "ambivo_gpt_actions=ambivo_gpt_actions:main",
         ],
     },
     classifiers=[
